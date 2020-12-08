@@ -25,7 +25,7 @@ OLD README:
 
 
 
-#Observations
+# Observations
 
 model.eval() is a kind of switch for some specific layers/parts of the model that behave differently during training and inference (evaluating) time. For example, Dropouts Layers, BatchNorm Layers etc. You need to turn off them during model evaluation, and .eval() will do it for you. In addition, the common practice for evaluating/validation is using torch.no_grad() in pair with model.eval() to turn off gradients computation:
 
@@ -47,3 +47,7 @@ https://discuss.pytorch.org/t/loading-saved-models-gives-inconsistent-results-ea
 
 Also: 
 could be due to dropout that is always active
+
+# Label embeddings
+Need to figure out how to learn/generate this for an arbitrary dataset
+https://www.youtube.com/watch?v=yp01hpk1g4A 
