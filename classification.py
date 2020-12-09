@@ -1,6 +1,6 @@
 from attention.model import StructuredSelfAttention
 from attention.train import train
-from losses import AsymmetricLossOptimized
+from losses import AsymmetricLoss, AsymmetricLossOptimized
 import torch
 import numpy as np
 import pandas as pd
@@ -157,13 +157,14 @@ def main(train, evaluate, criterion):
             attention_model.cuda()
 
         loss_fx = {
-            "binary_crossentropy": torch.nn.BCELoss(),
-            "assymetric_loss": AsymmetricLossOptimized(gamma_neg=4, gamma_pos=1, clip=0.05),
+            "binary_crossentropy": AsymmetricLoss(
+                gamma_neg=0, gamma_pos=0, clip=0
+            ),  # torch.nn.BCELoss(),
+            "focal_loss": AsymmetricLoss(gamma_neg=2, gamma_pos=2, clip=0),
+            "assymetric_loss": AsymmetricLoss(gamma_neg=4, gamma_pos=1, clip=0.05),
         }.get(criterion)
 
-        (1)
-
-        config["epochs"] = 4
+        config["epochs"] = 10
         current_model = multilabel_classification(
             attention_model, train_loader, test_loader, epochs=config["epochs"], criterion=loss_fx
         )
@@ -229,9 +230,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "-l", dest="loss", default="binary_crossentropy", help="loss function from dict"
     )
-    # parser.add_argument("-e", dest="ensembler", action="store_true", default=False, help="average over ensemble models")
-    # parser.add_argument("-m", dest="ensemblesize", type=int, default=5, help="average over M ensemble models")
-
     args = parser.parse_args()
 
     main(args.train, args.evaluate, args.loss)
