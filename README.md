@@ -51,3 +51,4 @@ could be due to dropout that is always active
 # Label embeddings
 Need to figure out how to learn/generate this for an arbitrary dataset
 https://www.youtube.com/watch?v=yp01hpk1g4A 
+https://github.com/lancopku/label-embedding-network
