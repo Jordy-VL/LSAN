@@ -170,7 +170,7 @@ def test_losses():
     # pos_weight = torch.ones([64])  # All weights are equal to 1
 
     losses = {
-        # "simplest_BCE": torch.nn.BCELoss(),
+        "simplest_BCE": torch.nn.BCELoss(),
         "simple_BCE": torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight),
         "binary_crossentropy": AsymmetricLoss(
             gamma_neg=0, gamma_pos=0, clip=0
@@ -179,7 +179,10 @@ def test_losses():
         "assymetric_loss": AsymmetricLoss(gamma_neg=4, gamma_pos=1, clip=0.05),
     }
     for loss, criterion in losses.items():
-        out = criterion(output, target)
+        if "simplest" in loss:
+            out = criterion(torch.sigmoid(output), target)
+        else:
+            out = criterion(output, target)
         print(f"{loss}: {out}")
 
 
