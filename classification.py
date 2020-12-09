@@ -157,6 +157,7 @@ def main(train, evaluate, criterion):
             attention_model.cuda()
 
         loss_fx = {
+            "simple_BCE": torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight),
             "binary_crossentropy": AsymmetricLoss(
                 gamma_neg=0, gamma_pos=0, clip=0
             ),  # torch.nn.BCELoss(),
