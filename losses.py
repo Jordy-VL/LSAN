@@ -126,6 +126,8 @@ class ASLSingleLabel(nn.Module):
     def forward(self, inputs, target, reduction=None):
         num_classes = inputs.size()[-1]
         log_preds = self.logsoftmax(inputs)
+
+        # CATEGORICAL ENCODING!
         self.targets_classes = torch.zeros_like(inputs).scatter_(1, target.long().unsqueeze(1), 1)
 
         # ASL weights
@@ -171,15 +173,19 @@ def test_losses():
         "binary_crossentropy": AsymmetricLoss(
             gamma_neg=0, gamma_pos=0, clip=0
         ),  # torch.nn.BCELoss(),
+        "categorical_crossentropy": ASLSingleLabel(gamma_neg=0, gamma_pos=0),
         "focal_loss": AsymmetricLoss(gamma_neg=2, gamma_pos=2, clip=0),
         "assymetric_loss": AsymmetricLoss(gamma_neg=4, gamma_pos=1, clip=0.05),
     }
     for loss, criterion in losses.items():
         if loss == "simple_BCE":
             out = criterion(output, target)
+        elif loss == "categorical_crossentropy":
+            m = nn.Softmax(dim=-1)
+            out = criterion(m(output), torch.from_numpy(np.array([1, 2, 0])).float())
         else:
             out = criterion(torch.sigmoid(output), target)
         print(f"{loss}: {out}")
 
 
-# test_losses()
+test_losses()
