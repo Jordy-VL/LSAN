@@ -165,7 +165,7 @@ def main(train, evaluate, criterion):
             "assymetric_loss": AsymmetricLoss(gamma_neg=4, gamma_pos=1, clip=0.05),
         }.get(criterion)
 
-        config["epochs"] = 10
+        config["epochs"] = 5
         current_model = multilabel_classification(
             attention_model, train_loader, test_loader, epochs=config["epochs"], criterion=loss_fx
         )
