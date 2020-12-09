@@ -23,7 +23,7 @@ class AsymmetricLoss(nn.Module):
         """
 
         # Calculating Probabilities
-        # x_sigmoid = torch.sigmoid(x)
+        x_sigmoid = x  # torch.sigmoid(x)
         xs_pos = x
         xs_neg = 1 - x_sigmoid
 
@@ -165,10 +165,6 @@ def test_losses():
     target = torch.from_numpy(label).float()
     pos_weight = torch.ones(len(label))
 
-    # target = torch.ones([10, 64], dtype=torch.float32)  # 64 classes, batch size = 10
-    # output = torch.full([10, 64], 1.5)  # A prediction (logit)
-    # pos_weight = torch.ones([64])  # All weights are equal to 1
-
     losses = {
         "simplest_BCE": torch.nn.BCELoss(),
         "simple_BCE": torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight),
@@ -179,11 +175,11 @@ def test_losses():
         "assymetric_loss": AsymmetricLoss(gamma_neg=4, gamma_pos=1, clip=0.05),
     }
     for loss, criterion in losses.items():
-        if "simplest" in loss:
-            out = criterion(torch.sigmoid(output), target)
-        else:
+        if loss == "simple_BCE":
             out = criterion(output, target)
+        else:
+            out = criterion(torch.sigmoid(output), target)
         print(f"{loss}: {out}")
 
 
-test_losses()
+# test_losses()
